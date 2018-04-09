@@ -1,0 +1,24 @@
+{
+  "index.html": {
+    "resources": [
+      "a.html"
+    ],
+    "refer": [
+      "a.html",
+      "c.html",
+      "b.html",
+      "d.html"
+    ]
+  },
+  "login.html": {
+    "refer": [
+      "register.html"
+    ],
+    "resources": []
+  },
+  "d.html": {
+    "refer": [
+      "login.html"
+    ]
+  }
+}

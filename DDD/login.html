@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	</head>
+<body>
+		<header class="mui-bar mui-bar-nav bg-color">
+				 <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">Login</h1>
+		</header>
+	 
+		<div class="mui-content">
+			<div class="login-a">
+				<img src="images/logo.png">
+			</div>
+			<div class="login-b">
+				<div class="login-b-b">
+					<div class="login-b-b-l">
+						账号
+					</div>
+					<div class="login-b-b-r">
+						<input type="text"  placeholder="请输入你的手机号码" />
+					</div>
+				</div>
+				<div class="login-b-b">
+					<div class="login-b-b-l">
+						密码
+					</div>
+					<div class="login-b-b-r">
+						<input type="password" placeholder="请输入你的密码" />
+					</div>
+				</div>
+				<div class="login-btn">
+					<button id='btn'>登录</button>
+			<p><a href="#" class="click_a">注册</a><a href="#" class="click_a mui-pull-right">找回密码</a></p>
+				</div>
+				<div class="sdk-a">
+					<a href="#" class="mui-icon mui-icon-qq"></a>
+					<a href="#" class="mui-icon mui-icon-weixin"></a>
+				</div>
+			</div> 
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			var click_a = document.getElementsByClassName('click_a');
+		
+			click_a[0].addEventListener('tap',function(){
+
+				mui.openWindow({
+					url:'register.html',
+					id:'register'
+				});
+			}); 
+			 
+			click_a[1].addEventListener('tap',function(){
+				mui.openWindow({
+					url:'password.html',
+					id:'password'
+				})
+			});
+			var btn=document.getElementById('btn');
+			var input = document.getElementsByTagName('input');
+				
+			btn.addEventListener('tap',function(){
+				
+				var phone = input[0].value;
+				var password = input[1].value;
+				if(phone =='')
+				{
+					mui.toast('手机号码不能为空');
+				}
+				if(password == '') 
+				{
+					mui.toast('密码不能为空');
+				}
+				 
+				var request_url=localStorage.getItem('request_url');
+				mui.get(request_url+'User/login_one',{
+					phone_data:phone,
+					password_data:password,
+				},function(data){
+					var json=data;
+					alert(data.password);
+					if(data==-1){  
+						mui.toast('账号或密码错误');
+					}else if(data == 1){
+						mui.toast('登录成功'); 
+					localStorage.setItem('login_phone',phone);
+		  			//显示出最开始进来的界面的 而不是跳转 
+		  			mui.plusReady(function(){ 
+		  				//登录的时候通知登录界面 
+		  				var target =plus.webview.getWebviewById('d.html');
+		  				alert(target);
+		  				mui.fire(target,'updata_user_info',{});
+		  				
+		  				//显示出最开始进来的界面的 而不是跳转
+		  				var indexView =plus.webview.getLaunchWebview();
+		  				indexView.show();
+		  			});
+					}
+				},'json'); 
+			}); 
+		</script>
+	</body>
+
+
+</html>

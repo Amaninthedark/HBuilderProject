@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	</head>
+
+	<body>
+	 
+			<header class="mui-bar  mui-bar mui-bar-nav bg-color">
+				 <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				  <a id='btnsetting' class="mui-icon-bars mui-icon mui-icon-right-nav mui-pull-right"></a>
+		    	<h1 class="mui-title">d</h1>
+			</header>
+			
+			<button class="info" id='zc' style="margin-top: 50px;">注册</button>
+			<div class="header-img" style="width: 100px;height: 100px; display: block;">
+				<img src="images/logo.png"  style="width: 100%; height: 100%;">
+			</div>
+			<div class="info">昵称</div> 
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+	
+			var btnsetting =document.getElementById('btnsetting');
+			btnsetting.addEventListener('tap',function(){
+					mui.openWindow({
+						url :'setting.html',
+						id:'setting'
+					});
+			});
+	
+	
+	
+			localStorage.removeItem('login_phone');
+			var register=document.getElementById('zc');
+			var phone=localStorage.getItem('login_phone');
+			zc.addEventListener('tap',function(){
+				if(!check_login())
+				{
+				 
+						mui.openWindow({
+						url:'login.html',
+						id:'login'
+						});
+				}
+				else 
+				{
+				   alert('已登录');
+				}
+			})
+			window.addEventListener('updata_user_info',function(){
+				get_user_info();
+				
+				//关闭login 和 register
+				setTimeout(function(){
+					mui.plusReady(function(){
+						var login=plus.webview.getWebviewById('login');
+						var register=plus.webview.getWebviewById('register');
+						if(login){
+							login.close();
+						}
+						if(register){
+							register.close();
+						}
+					})
+				});
+			});
+			
+			//如果登录就获取服务器信息, 没有登录就return
+			get_user_info();
+			function get_user_info(){
+				if(!check_login())
+				{ 
+					return ;
+				}
+				
+					var request_url=localStorage.getItem('request_url');
+					var info=document.getElementsByClassName('info');
+					var phone = localStorage.getItem('login_phone');
+					mui.get(request_url+'User/get_user_info',{
+						phone_data:phone,
+					},function(data){ 
+						var json=data;
+						alert(data); 
+						alert(data.phone);
+						//最好把获得的信息都解析一遍
+						//var json=JSON.parse(data);
+						  
+						var nickname='';
+						if(json.nickname) 
+						{ 
+							nickname=json.nickname;
+						}
+						else 
+						{  
+							nickname=json.phone;
+						}
+						info[1].innerHTML=nickname; 
+					},'json');
+			} 
+			//判断是否登录
+			function check_login(){
+				var phone = localStorage.getItem('login_phone');
+				if(phone==''|| phone==null || phone ==undefined)
+				{
+					return false;
+				}
+				else 
+				{
+					return true; 
+				}
+			}
+		</script>
+	</body>
+ 
+</html>

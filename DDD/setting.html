@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/style.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav bg-color">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">设置</h1>
+		</header>
+		<div class="setting-content">
+			<div class="input">
+				<form class="mui-popup-input-group" style="accelerator: 100%;">
+					<div class="mui-input-row" style="background-color: white;"> 
+						<label>头像</label>
+						<img id='head_img' src="images/logo.png" style="height: 30px; width: 30px;">
+					</div>
+					<div class="mui-input-row" > 
+						<label>昵称</label>
+						<input style="width: 70%; float: left; background-color: white;" type="text" placeholder="请输入你的昵称">
+					</div>
+					<div class="mui-input-row"> 
+						<label >签名</label>
+						<input style="width: 70%;float: left; background-color: white;" type="text" placeholder="请输入你的签名">
+					</div>
+					<div class="mui-input-row"> 
+						<label>城市</label>
+						<input style="width: 70%;float: left; background-color: white;" disabled="disabled" type="text" placeholder="城市">
+					</div>
+					<div class="mui-input-row"> 
+						<label>性别</label>
+						<input style="width: 70%;float: left; background-color: white;" disabled="disabled" type="text" placeholder="性别">
+					</div>
+				</form>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			var imgfile_url=localStorage.getItem('img_url');
+			var head_img=document.getElementById('head_img');
+			var cell = document.getElementsByClassName('mui-input-row');
+			cell[0].addEventListener('tap',function(){
+				mui.plusReady(function(){
+					var btnArray = [{title:"拍照"},{title:"相册"}]; //选择按钮  1 2 3
+						plus.nativeUI.actionSheet( {
+							title:"请选择",
+							cancel:"取消", // 0
+							buttons:btnArray
+							}, 
+							function(e){
+								var index = e.index; // 
+								alert(index);
+								if(index==1)
+								{
+									var cmr = plus.camera.getCamera();
+									cmr.captureImage( function ( p ) {
+											//成功
+											plus.io.resolveLocalFileSystemURL( p, function ( entry ) {
+											 
+											update_img(entry.toLocalURL());
+											}, function ( e ) {
+												console.log( "读取拍照文件错误："+e.message );
+											} );
+											
+										}, function ( e ) {
+											console.log( "失败："+e.message );
+									}, {filename:'_doc/camera/',index:1} ); //  “_doc/camera/“  为保存文件名
+
+								}else if(index==2) {
+									plus.gallery.pick( function(path){
+    								 
+											update_img(path);
+									    
+									}, function ( e ) {
+									    console.log( "取消选择图片" );
+									}, {filter:"image"} );
+								} 
+						} );
+				});
+			});
+			function update_img(p){
+				var server=imgfile_url+"/upload_file.php"; //这里你们需要修改成自己服务器上的文件路径
+				var files=[]; //图片存放的数组 可以上传一个，或者多个图片 
+				//又初始化了一下文件数组 为了支持我的单个上传,如果你要一次上传多个，就不要在写这一行了
+				//注意 
+				files=[];
+				var n=p.substr(p.lastIndexOf('/')+1);
+				files.push({name:"uploadkey",path:p});
+				//开始上传
+					if(files.length<=0){
+						plus.nativeUI.alert("没有添加上传文件！");
+						return;
+					}
+					//原生的转圈等待框
+					var wt=plus.nativeUI.showWaiting();
+					var task=plus.uploader.createUpload(server,
+						{method:"POST"},
+						function(t,status){ //上传完成
+							alert(status);
+							if(status==200){	
+								//资源
+								var responseText = t.responseText;
+								//转换成json 
+								
+								var json = eval('(' + responseText + ')');
+								//上传文件的信息
+								alert(json.files);
+								var files = json.files;
+								//上传成功以后的保存路径
+								 alert(files); 
+								var img_url = files.uploadkey.url;
+								alert(imgfile_url+img_url);				
+								head_img.src=imgfile_url+img_url;
+								//ajax 写入数据库	
+								//关闭转圈等待框
+								wt.close();
+							}else{
+								console.log("上传失败："+status);
+								//关闭原生的转圈等待框
+								wt.close();
+							}
+						});
+					task.addData("client","");
+					task.addData("uid",getUid());
+					for(var i=0;i<files.length;i++){
+						var f=files[i];
+						task.addFile(f.path,{key:f.name});
+					}
+					task.start(); 
+		// 产生一个随机数
+		function getUid(){
+			return Math.floor(Math.random()*100000000+10000000).toString();
+		}
+	}
+		</script>
+	</body>
+
+</html>
