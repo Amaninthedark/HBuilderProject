@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+
+	<body style="margin: 0 auto;text-align:center ">
+		<div style="text-align:center;">
+			<button id='btn1'>添加一条新数据</button>
+
+			<table id='so' border="1" style="margin: 0 auto; ">
+
+			</table>
+			<div id='sos' style="visibility: hidden;">
+				<div>
+					<div>
+						学号
+					</div>
+					<input id='ipt1' type="text" />
+					<div>
+						姓名
+					</div>
+					<input id='ipt2' type="text" />
+
+				</div>
+				<button id='btn2'>添加</button>
+			</div>
+
+			<div id='sos2' style="visibility: hidden;">
+				<div>
+					<div>
+						学号
+					</div>
+					<input id='ipt3' type="text" />
+					<div>
+						姓名
+					</div>
+					<input id='ipt4' type="text" />
+
+				</div>
+				<button id='btn3'>确定</button>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script>
+		var btn1 = document.getElementById('btn1');
+		var btn2 = document.getElementById('btn2');
+		var inpt1 = document.getElementById('ipt1');
+		var inpt2 = document.getElementById('ipt2');
+		var tab = document.getElementById('so');
+		var tianjia = document.getElementById('sos');
+		var xiugai1 = document.getElementById('sos2');
+		var inpt3 = document.getElementById('ipt3');
+		var inpt4 = document.getElementById('ipt4');
+		var btn3 = document.getElementById('btn3');
+		var arr = "";
+		//查询
+		var datax = [];
+		var len = "";
+
+		function q() { 
+			$.ajax({
+				type: "get", //修改当前页面内容
+				url: "https://www.sxscott.com/gujie/index.php/User/qimo",
+				data: {
+
+				},
+				async: true,
+				success: function(data) {
+					json = JSON.parse(data);
+
+					console.log(json)
+					var str = " <tr><th>ID</th><th>学号</th><th>姓名</th><th>操作</th></tr>";
+					for(var key in json) {
+						str += "<tr ><td>" + key + "</td><td>" + json[key].xuehao + "</td><td>" + json[key].name + "</td><td><button id=" + json[key].id + " onclick=xiugai(this) >修改</button>  <button id=" + json[key].id + " onclick=be(this) >删除</button></td></tr>";
+						len = key;
+					};
+					datax = json;
+					console.log(data);
+					tab.innerHTML = str;
+				}
+			});
+		}
+
+		btn1.addEventListener('click', function() {
+			tianjia.style.visibility = "visible";
+		})
+		btn2.addEventListener('click', function() {
+			tianjia.style.visibility = "hidden";
+			$.ajax({
+				type: "get", //修改当前页面内容
+				url: "https://www.sxscott.com/gujie/index.php/User/tianjiaq",
+				data: {
+					xuehao: inpt1.value,
+					name: inpt2.value
+				},
+				async: true,
+				success: function(data) {
+
+					q();
+
+				}
+			});
+		})
+		btn3.addEventListener('click', function() {
+			xiugai1.style.visibility = "hidden";
+			$.ajax({
+				type: "get", //修改当前页面内容
+				url: "https://www.sxscott.com/gujie/index.php/User/upset",
+				data: {
+					id: arr,
+					xuehao: inpt3.value,
+					name: inpt4.value
+				},
+				async: true,
+				success: function(data) {
+
+					q();
+
+				}
+			});
+		})
+		q();
+		//xiugai 
+		function xiugai(e) {
+			xiugai1.style.visibility = "visible";
+			console.log(e.id);
+			arr = e.id;
+			for(var key in datax) {
+				if(datax[key].id == e.id) {
+					console.log(datax[key].xuehao);
+					inpt3.value = datax[key].xuehao;
+					inpt4.value = datax[key].name;
+				}
+			}
+		}
+		//shanchu
+		function be(e) {
+			$.ajax({
+				type: "get", //修改当前页面内容
+				url: "https://www.sxscott.com/gujie/index.php/User/delete",
+				data: {
+					id: e.id
+				},
+				async: true,
+				success: function(data) {
+
+					q();
+				}
+			});
+		}
+	</script>
+
+</html>

@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>zongbao</name>
+	<name>期末设计</name>
 	<comment>Create By HBuilder</comment>
 	<projects>
 	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>com.pandora.projects.ui.MKeyBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 		<buildCommand>
 			<name>com.aptana.ide.core.unifiedBuilder</name>
 			<arguments>
@@ -17,12 +12,11 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>com.pandora.projects.ui.MKeyNature</nature>
 		<nature>com.aptana.projects.webnature</nature>
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>0</id>
+			<id>1529734831198</id>
 			<name></name>
 			<type>10</type>
 			<matcher>
@@ -40,7 +34,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>0</id>
+			<id>1530198692601</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
